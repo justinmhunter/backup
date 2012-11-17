@@ -9,6 +9,7 @@ usage() {
 
 missingDir() {
   echo "ERR: missing dir: $1"
+  exit 256
 }
 
 BACKUP=$1
@@ -26,6 +27,11 @@ fi
 
 if [ ! -d $DEST ]; then
   missingDir $DEST
+fi
+
+if [ $(/bin/mount | /bin/grep backup | /usr/bin/wc -l) != 1 ]; then
+  echo "ERR: is backup volume mounted?"
+  exit 257
 fi
 
 if [ $(/usr/bin/rsync -avqn $SRC $DEST | /usr/bin/wc -l) != 0 ]; then

@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+usage() {
+  SCRIPT=$(basename $0)
+  echo "usage: $SCRIPT DIR_TO_BE_BACKED_UP"
+  echo "ex: $SCRIPT music"
+  exit 255
+}
+
+missingDir() {
+  echo "ERR: missing dir: $1"
+}
+
+BACKUP=$1
+
+if [ -z $BACKUP ]; then
+  usage
+fi
+
+SRC="/data/$BACKUP/"
+DEST="/backup/backup/$BACKUP/"
+
+if [ ! -d $SRC ]; then
+  missingDir $SRC
+fi
+
+if [ ! -d $DEST ]; then
+  missingDir $DEST
+fi
+
+if [ $(/usr/bin/rsync -avqn $SRC $DEST | /usr/bin/wc -l) != 0 ]; then
+
+  echo "doing the following in 10s. speak now or forever hold your peace."
+  echo "rsync -av $SRC $DEST"
+
+  for i in {1..10}; do 
+  echo -n "."
+  sleep 1
+  done
+
+  echo
+
+  /usr/bin/rsync -av $SRC $DEST | /bin/mail -s "Automated backup report" justinmhunter@gmail.com
+
+  echo "done."
+  exit 0
+
+fi

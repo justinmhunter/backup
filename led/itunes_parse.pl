@@ -3,6 +3,8 @@
 # this script continually polls the iTunes database and (if it's running)
 # publishes it to a web page which is then curled and pushed to the LED. 
 
+# adding a comment
+
 # TODO: daemonize!
 
 sub get_itunes_data {

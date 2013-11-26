@@ -34,7 +34,7 @@ if [ $(/bin/mount | /bin/grep backup | /usr/bin/wc -l) != 1 ]; then
   exit 257
 fi
 
-if [ $(/usr/bin/rsync -avqn $SRC $DEST | /usr/bin/wc -l) != 0 ]; then
+if [ $(/usr/bin/rsync -avqn --exclude='._*' --exclude='*.jpg' $SRC $DEST | /usr/bin/wc -l) != 0 ]; then
 
   echo "doing the following in 10s. speak now or forever hold your peace."
   echo "rsync -av $SRC $DEST"

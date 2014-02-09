@@ -46,6 +46,8 @@ if [ $(/usr/bin/rsync -avqn --exclude='._*' --exclude='*.jpg' $SRC $DEST | /usr/
 
   echo
 
+  /bin/chmod -R 0777 $SRC
+
   /usr/bin/rsync -av $SRC $DEST | /bin/mail -s "Automated backup report" justinmhunter@gmail.com
 
   echo "done."

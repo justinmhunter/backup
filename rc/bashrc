@@ -1,11 +1,20 @@
-# .bashrc
-
-# Source global definitions
 if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
-# User specific aliases and functions
+function parse_git_branch {
+  ref=$(/usr/libexec/git-core/git-symbolic-ref HEAD 2> /dev/null) || return
+  echo "("${ref#refs/heads/}")"
+}
+
+function ff() {
+  find . -regextype posix-egrep -type f ! -regex '.*/.svn/.*' ! -iregex '.*\.(swf|gif|jpg|png|db|gz|jar)$' -exec grep -n "$@" '{}' /dev/null \;
+} 
+
+RED="\[\033[0;31m\]"
+YELLOW="\[\033[0;33m\]"
+GREEN="\[\033[0;32m\]"
+
 alias re='screen -raAd'
 alias ack='ack -a --nobinary'
 alias grep='grep --color=auto'
@@ -13,14 +22,6 @@ alias vi='vim'
 alias diff='diff -u'
 alias addkeys='/usr/bin/ssh-add ~/.ssh/id_dsa ~/.ssh/id_rsa'
 export TERM=linux
+export EDITOR=vim
 export HISTTIMEFORMAT='%F %T '
-export PS1='\[\e[0;31m\]\u@\h\[\e[m\] \[\e[0;37m\]\w\[\e[m\] \[\e[0;32m\]\t\[\e[m\] \$ '
-
-# root stuff
-# alias raidcheck='/sbin/dmraid -s'
-# alias sshuttle='sshuttle -H --dns -r justinh@bastion.wikia.net 10.8.0.0/16 10.6.0.0/16 10.4.0.0/16'
-
-
-function ff() {
-find . -regextype posix-egrep -type f ! -regex '.*/.svn/.*' ! -iregex '.*\.(swf|gif|jpg|png|db|gz|jar)$' -exec grep -n "$@" '{}' /dev/null \;
-} 
+export PS1="\[\e[0;31m\]\u@\h\[\e[m\] \[\e[0;37m\]\w\[\e[m\] \[\e[0;33m\]\$(parse_git_branch)\[\e[m\] \$ "

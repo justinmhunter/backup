@@ -3,7 +3,10 @@ if [ -f /etc/bashrc ]; then
 fi
 
 function parse_git_branch {
-  ref=$(/usr/libexec/git-core/git-symbolic-ref HEAD 2> /dev/null) || return
+  # Ubuntu
+  ref=$(/usr/bin/git symbolic-ref HEAD 2> /dev/null) || return
+  # CentOS
+  #ref=$(/usr/libexec/git-core/git-symbolic-ref HEAD 2> /dev/null) || return
   echo "("${ref#refs/heads/}")"
 }
 

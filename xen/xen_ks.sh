@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 $(/bin/bash -n $0 >> /dev/null 2>&1)
 if [ $? -ne 0 ]; then
    $(/bin/bash -n $0)

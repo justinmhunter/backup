@@ -9,6 +9,8 @@
 #   since I'm not allowing this script to run on top of already running tar pipes.
 # * everything is syslog'ed.
 
+# adding comment to test GH
+
 $(/bin/bash -n $0 >> /dev/null 2>&1)
 if [ $? -ne 0 ]; then
    $(/bin/bash -n $0)

@@ -43,6 +43,9 @@ fi
 
 if [ $(/usr/bin/rsync -avn --exclude='*DS_Store*' --exclude='._*' --exclude='*.jpg' $SRC $DEST | /bin/grep "\.mp3" | /usr/bin/wc -l) != 0 ]; then
 
+  echo "cleaning up ._ files from /data/music first.."
+  /usr/bin/find /data/music | /bin/grep \/\._ | /bin/sed "s/'/\\\'/g" | /usr/bin/xargs -I {} rm -f {}
+
   echo "doing the following in 10s. speak now or forever hold your peace."
   echo "rsync -av $SRC $DEST"
 

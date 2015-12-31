@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 
-$(/bin/bash -n $0 >> /dev/null 2>&1)
-if [ $? -ne 0 ]; then
-   $(/bin/bash -n $0)
-   echo "This script has syntax errors, try again!"
-   exit 254
-fi
+set -e
 
 usage() {
   SCRIPT=$(basename $0)
@@ -43,8 +38,8 @@ fi
 
 if [ $(/usr/bin/rsync -avn --exclude='*DS_Store*' --exclude='._*' --exclude='*.jpg' $SRC $DEST | /bin/grep "\.mp3" | /usr/bin/wc -l) != 0 ]; then
 
-  echo "cleaning up ._ files from /data/music first.."
-  /usr/bin/find /data/music | /bin/grep \/\._ | /bin/sed "s/'/\\\'/g" | /usr/bin/xargs -I {} rm -f {}
+  echo "cleaning up ._ files from $SRC first."
+  /usr/bin/find $SRC | /bin/grep \/\._ | /bin/sed "s/'/\\\'/g" | /usr/bin/xargs -I {} rm -f {}
 
   echo "doing the following in 10s. speak now or forever hold your peace."
   echo "rsync -av $SRC $DEST"
@@ -58,7 +53,10 @@ if [ $(/usr/bin/rsync -avn --exclude='*DS_Store*' --exclude='._*' --exclude='*.j
 
   /bin/chmod -R 0777 $SRC
 
-  /usr/bin/rsync -av --exclude='*DS_Store*' --exclude='._*' --exclude='*.jpg' $SRC $DEST | /usr/bin/mail -s "Automated backup report" justinmhunter@gmail.com
+  ( /usr/bin/rsync -av --exclude='*DS_Store*' --exclude='._*' --exclude='*.jpg' $SRC $DEST; \
+    find $SRC | egrep -v '\._|DS_' > $SRC/playlist.txt; \
+    sudo service ezstream stop; \
+    sudo service ezstream start ) | /usr/bin/mail -s "Automated backup report" justinmhunter@gmail.com
 
   echo "done."
   exit 0

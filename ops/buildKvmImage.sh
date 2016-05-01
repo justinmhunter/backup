@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 
-$(/bin/bash -n $0 >> /dev/null 2>&1)
-if [ $? -ne 0 ]; then
-   $(/bin/bash -n $0)
-   /bin/echo "ERR: this script has syntax errors."
-   exit 257
-fi
+set -e
 
 # TODO: add handler for unmounting on exit
 
@@ -77,7 +72,7 @@ checkExit $? 'temp mount mkdir'
 /bin/mount $IMG_DIR$IMG_HOSTNAME $TEMP_MOUNT_DIR
 checkExit $? 'img mount'
 
-/usr/sbin/debootstrap --include=linux-image-virtual,nfs-kernel-server,man-db,upstart,openssh-server,acpid,build-essential,wget,language-pack-en,aptitude,locales,debconf-utils --arch=amd64 $LTS_VERSION $TEMP_MOUNT_DIR http://repo.prod.wikia.net/ubuntu
+/usr/sbin/debootstrap --include=linux-image-virtual,nfs-kernel-server,man-db,upstart,openssh-server,acpid,build-essential,wget,language-pack-en,aptitude,locales,debconf-utils --arch=amd64 $LTS_VERSION $TEMP_MOUNT_DIR
 checkExit $? 'debootstrap'
 
 # network stuff
@@ -92,22 +87,10 @@ iface eth0 inet static
  gateway $IMG_IP_GW
 EOF
 
-# apt stuff
-/bin/cat << EOF > $TEMP_MOUNT_DIR/etc/apt/sources.list.d/wikia.list
-#deb http://repo.prod.wikia.net/ubuntu $LTS_VERSION main restricted universe multiverse
-deb http://repo.prod.wikia.net/ubuntu $LTS_VERSION-updates main restricted universe multiverse
-deb http://repo.prod.wikia.net/ubuntu $LTS_VERSION-security main restricted universe multiverse
-deb http://repo.prod.wikia.net/ubuntu/ $LTS_VERSION-backports main restricted universe multiverse
-deb http://repo.prod.wikia.net/canonical/ $LTS_VERSION partner
-
-# hack for chef omnibus. once live<=>frozen are merged, this should point @ the frozen opscode mirror
-deb http://repo.prod.wikia.net/local_live/amd64/ / 
-EOF
-
 # chef chroot install until we merge omnibus packages into our current chef frozen repo. 
 # once we merge, this install can be done with debootstrap.
-/usr/sbin/chroot $TEMP_MOUNT_DIR /usr/bin/apt-get update
-/usr/sbin/chroot $TEMP_MOUNT_DIR /usr/bin/apt-get --allow-unauthenticated -y install chef
+#/usr/sbin/chroot $TEMP_MOUNT_DIR /usr/bin/apt-get update
+#/usr/sbin/chroot $TEMP_MOUNT_DIR /usr/bin/apt-get --allow-unauthenticated -y install chef
 
 # console stuff
 /bin/cat << EOF > $TEMP_MOUNT_DIR/etc/init/ttyS0.conf
@@ -122,7 +105,7 @@ EOF
 /bin/sed -i -e 's/root\:\*\:/root:\$1\$\/se2gGGk\$xW5z\/jrIpmpcY86T6e2OJ\.\:/g' $TEMP_MOUNT_DIR/etc/shadow
 
 # in order to prevent MAC collisions, we read all xmls in the KVM conf dir, grab the last 2 digits off the last available hex, and increment
-LAST_HEX_IN_USE=$(/bin/grep -i "mac address" /etc/libvirt/qemu/* | /usr/bin/awk -F: {'print $7'} | /usr/bin/awk -F\' {'print $1'} | /usr/bin/sort -n | /usr/bin/tail -1)
+LAST_HEX_IN_USE=$(/bin/grep -i 'mac address' /etc/libvirt/qemu/*.xml | /usr/bin/awk -F: {'print $7'} | /usr/bin/awk -F\' {'print $1'} | /usr/bin/sort -n | /usr/bin/tail -1)
 if [ "$LAST_HEX_IN_USE" == "" ]; then
   LAST_HEX_IN_USE=A0
 fi

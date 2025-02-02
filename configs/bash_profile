@@ -1,4 +1,7 @@
 export BASH_SILENCE_DEPRECATION_WARNING=1
+export TERM=linux
+export EDITOR=vim
+export HISTTIMEFORMAT='%F %T '
 
 alias ack='ack -a --nobinary'
 alias bandcamp-dl='bandcamp-dl --base-dir=~/Downloads'
@@ -8,10 +11,6 @@ alias grep='grep -i --color=auto'
 alias home='ssh spree'
 alias ll='ls -lG'
 alias vi='vim'
-
-export TERM=linux
-export EDITOR=vim
-export HISTTIMEFORMAT='%F %T '
 
 function br() {
   /usr/bin/git for-each-ref --sort=-committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'

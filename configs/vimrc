@@ -34,6 +34,8 @@ let g:miniBufExplMapWindowNavArrows = 1
 let g:miniBufExplMapCTabSwitchBufs = 1 
 let g:miniBufExplModSelTarget = 1 
 
-"hi Comment      ctermfg=lightgray
-
 colorscheme slate
+
+" these highlights apparently need to happen after colorscheme to work propertly 
+"hi Comment      ctermfg=lightgray
+"hi ColorColumn  ctermbg=lightgray

@@ -1,0 +1,14 @@
+escape ``
+hardstatus alwayslastline
+startup_message off
+hardstatus on
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%l][%{B} %d/%m/%y %{W}%c %{g}]'
+
+# if -x $HOME/.screen-ssh-agent, unlink .screen-ssh-agent
+# this has to be before the other screens! (so they inherit the agent/keys)
+setenv SSH_AUTH_SOCK $HOME/.screen-ssh-agent
+screen -t ssh-agent 0 ssh-agent -a $SSH_AUTH_SOCK $SHELL
+screen -t rt        1 rtorrent 
+screen -t irc       2 irssi
+screen -t foo       3 bash
+screen -t bar       4 bash

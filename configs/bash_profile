@@ -1,0 +1,43 @@
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
+alias ack='ack -a --nobinary'
+alias bandcamp-dl='bandcamp-dl --base-dir=~/Downloads'
+alias diff='diff -u'
+alias gd='TMP_FILE="/var/tmp/diff_$(date +%s%N | sha3sum | head -c 10).diff" && git diff > "$TMP_FILE" && code "$TMP_FILE"'
+alias grep='grep -i --color=auto'
+alias home='ssh spree'
+alias ll='ls -lG'
+alias vi='vim'
+
+export TERM=linux
+export EDITOR=vim
+export HISTTIMEFORMAT='%F %T '
+
+function br() {
+  /usr/bin/git for-each-ref --sort=-committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
+}
+
+function parse_git_branch {
+  ref=$(/usr/bin/git symbolic-ref HEAD 2> /dev/null) || return
+  echo "("${ref#refs/heads/}")"
+}
+
+export PS1="\[\e[0;31m\]\u@\h\[\e[m\] \[\e[0;37m\]\w\[\e[m\] \[\e[0;33m\]\$(parse_git_branch)\[\e[m\] \$ "
+
+# pyenv initialization
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(/opt/homebrew/bin/pyenv init --path)"
+eval "$(/opt/homebrew/bin/pyenv init -)"
+
+# bash history plugin
+eval "$(/opt/homebrew/bin/fzf --bash)"
+
+# brew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# http://superuser.com/questions/20900/bash-history-loss
+PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/justinmhunter/.cache/lm-studio/bin"

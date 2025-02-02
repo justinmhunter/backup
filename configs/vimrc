@@ -1,4 +1,5 @@
 set backspace=indent,eol,start  "bs:    allows you to backspace over the listed character types
+set colorcolumn=80
 set expandtab
 set ignorecase
 set hlsearch
